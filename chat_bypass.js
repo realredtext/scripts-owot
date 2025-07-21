@@ -17,6 +17,7 @@ let cs_functions = {
             staff: data.staff,
             date: data.date,
             dataObj: data,
+	    color: data.color,
             hide: false
         });
     },
