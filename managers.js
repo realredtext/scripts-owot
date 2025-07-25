@@ -37,7 +37,7 @@ function ManagerCommandWrapper(name, color, functions, keyPhrase) {
         }
 
         let res = top.core.send(top.functions[subcommand](...params));
-        if(res.length) return res;
+        if(typeof res === "string" && res?.length) return res;
         
     };
 };
