@@ -31,11 +31,14 @@ function ManagerCommandWrapper(name, color, functions, keyPhrase) {
         subcommand = subcommand.toLowerCase();
         if(!subcommand || !(subcommand in top.functions)) {
             return top.core.send(`Invalid subcommand "${subcommand||''}", refer to /${top.keyPhrase} help`);
-        } else if(subcommand === "help") {
+        } 
+        if(subcommand === "help") {
             return top.functions.help();
-        } else {
-            return top.core.send(top.functions[subcommand](...params));
         }
+
+        let res = top.core.send(top.functions[subcommand](...params));
+        if(res.length) return res;
+        
     };
 };
 
