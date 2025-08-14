@@ -5,7 +5,7 @@
     this.color = color;
 
     this.send = function(message, html) {
-        addChat(null, 0, "user", this.name, message, this.name.replace(/[\[\]]/gm, ""), false, false, false, this.color, getDate())
+        addChat(null, 0, "user", this.name, message, this.name.replace(/[\[\]]/gm, ""), html, false, false, this.color, getDate())
     };
     
     return this;
