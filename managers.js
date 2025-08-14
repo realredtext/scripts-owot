@@ -4,19 +4,20 @@
     this.name = `[ ${name} ]`;
     this.color = color;
 
-    this.send = function(message) {
+    this.send = function(message, html) {
         addChat(null, 0, "user", this.name, message, this.name.replace(/[\[\]]/gm, ""), false, false, false, this.color, getDate())
     };
     
     return this;
 };
 
-function ManagerCommandWrapper(name, color, functions, keyPhrase) {
+function ManagerCommandWrapper(name, color, functions, keyPhrase, htmlCommands) {
     let top = this;
 
     this.name = name || "Manager";
     this.color = color || "#000000";
     this.keyPhrase = keyPhrase.toLowerCase() || name.toLowerCase();
+    this.htmlCommands = htmlCommands ?? [];
     this.functions = {
         ...functions,
         help: function() {
@@ -36,7 +37,7 @@ function ManagerCommandWrapper(name, color, functions, keyPhrase) {
             return top.functions.help();
         }
 
-        let res = top.core.send(top.functions[subcommand](...params));
+        let res = top.core.send(top.functions[subcommand](...params), top.htmlCommands.includes(subcommand));
         if(typeof res === "string" && res?.length) return res;
         
     };
