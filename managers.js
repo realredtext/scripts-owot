@@ -4,7 +4,7 @@
     this.name = `[ ${name} ]`;
     this.color = color;
 
-    this.send = function(message, html) {
+    this.send = function(message, html=false) {
         addChat(null, 0, "user", this.name, message, this.name.replace(/[\[\]]/gm, ""), html, false, false, this.color, getDate())
     };
     
