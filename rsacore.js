@@ -231,8 +231,8 @@ function generateRSAKeys(primeLength=20) {
 	[out.publicE, out.privE] = generateExponentPair(out.phiProduct);
 	
 	return {
-		product: out.product,
-		publicE: out.publicE,
+		product: out.product.toString(),
+		publicE: out.publicE.toString(),
 		logPrivateExponent: function() {
 			console.log(out.privE.toString());
 		},
