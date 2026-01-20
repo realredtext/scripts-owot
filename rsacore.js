@@ -276,7 +276,7 @@ function splitMessage(string, chunkLength=20) {
 	if(typeof chunkLength !== "number") throw new TypeError();
 	if(chunkLength < 2) throw new RangeError();
 	
-	return string.match(/.{1,20}/g);
+	return string.match(RegExp(`.{1,${chunkLength}}`));
 };
 
 const base512Digits = (()=>{
