@@ -271,7 +271,7 @@ function RSAKeysFrom(values) {
 	}
 };
 
-function splitMessage(string, chunkLength=20) {
+function splitMessage(string, chunkLength=80) {
 	if(typeof string !== "string") throw new TypeError();
 	if(typeof chunkLength !== "number") throw new TypeError();
 	if(chunkLength < 2) throw new RangeError();
