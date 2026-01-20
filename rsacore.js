@@ -164,19 +164,13 @@ function messageToInt(message) {
 };
 
 function intToMessage(value) {
+	if(typeof value !== "bigint") throw new TypeError();
 	let q = value.toString(2);
 	if(BigInt(q.length) % 8n) q = ("0".repeat(Number(8n - (BigInt(q.length) % 8n))))+q;
 	
 	q = q.match(/.{8}/g).map(bit => String.fromCharCode(Number(`0b${bit}`)));
 	
 	return q.join("");
-};
-
-function isDivisibleBy(num, den) {
-	if(typeof num !== "bigint") throw new TypeError();
-	if(typeof den !== "bigint") throw new TypeError();
-	
-	return !(num % den);
 };
 
 function randomNumber(len=24) { // len x => max value 10**x;
@@ -192,11 +186,11 @@ function artificialBoost(bigint) {
 	return BigInt(bigint.toString()+(["1","3","7","9"][Math.floor(Math.random()*4)]));
 };
 
-function largePrimeNumber() {
+function largePrimeNumber(primeLength=20) {
 	const MAX_ATTEMPTS = 100000; //this is only ran to make keys, not send messages
 	let primeGuess;
 	for(let i = 0; i < MAX_ATTEMPTS; i++) {
-		primeGuess = artificialBoost(200000000000000000000000000n+randomNumber());
+		primeGuess = artificialBoost(BigInt("1"+"0".repeat(primeLength-2))+randomNumber(primeLength-2));
 		if(isPrime(primeGuess)) {
 			return primeGuess;
 		};
@@ -226,10 +220,10 @@ function generateExponentPair(phiProduct, publicAttempts=10000, privateAttempts=
 	return;
 };
 
-function generateRSAKeys() {
+function generateRSAKeys(primeLength=20) {
 	let out = {
-		prime1: largePrimeNumber(),
-		prime2: largePrimeNumber()
+		prime1: largePrimeNumber(primeLength),
+		prime2: largePrimeNumber(primeLength)
 	};
 	
 	out.product = out.prime1*out.prime2;
@@ -239,6 +233,9 @@ function generateRSAKeys() {
 	return {
 		product: out.product,
 		publicE: out.publicE,
+		logPrivateExponent: function() {
+			console.log(out.privE);
+		},
 		lockMessage: function(string) {
 			if(typeof string !== "string") throw new TypeError();
 			let numericized = messageToInt(string);
@@ -253,6 +250,27 @@ function generateRSAKeys() {
 	};
 };
 
+function RSAKeysFrom(values) {
+	if(typeof values !== "object") throw new TypeError();
+	if(!values.product || typeof values.product !== "bigint") throw new TypeError("No/bad value of N (product) given (should be bigint)!");
+	if(!values.publicE || typeof values.publicE !== "bigint") throw new TypeError("No/bad value of e (publicE) given (should be bigint)!");
+	if(!values.privE || typeof values.privE !== "bigint") throw new TypeError("No/bad value of d (privE) given (should be bigint)!")
+	
+	return {
+		lockMessage: function(string) {
+			if(typeof string !== "string") throw new TypeError();
+			let numericized = messageToInt(string);
+			return power(numericized, values.publicE, values.product);
+		},
+		
+		unlockMessage: function(number) {
+			if(typeof number !== "bigint") throw new TypeError();
+			let unlocked = power(number, values.privE, values.product);
+			return intToMessage(unlocked);
+		}
+	}
+};
+
 function splitMessage(string, chunkLength=20) {
 	if(typeof string !== "string") throw new TypeError();
 	if(typeof chunkLength !== "number") throw new TypeError();
@@ -261,27 +279,43 @@ function splitMessage(string, chunkLength=20) {
 	return string.match(/.{1,20}/g);
 };
 
-const orderedBase36Digits = "0123456789abcdefghijklmnopqrstuvwxyz".split("");
+const base512Digits = (()=>{ //only way to sufficiently compact messages
+	let output = "";
+	for(let i = 0x2200; i < 0x2400; i++) {
+		output += String.fromCharCode(i);
+	};
+	return output;
+})().split("");
 
-function base36toBigInt(base36) {
-	if(typeof base36 !== "string") throw new TypeError();
-	base36 = base36.toLowerCase();
-	if(/[^0-9a-z]/g.test(base36)) throw new TypeError("Invalid base 36 string!");
+function bigIntToBase512(x) {
+    let seed = "";
+    if(x >= 512n) seed = bigIntToBase512(x/512n);
+    return seed + base512Digits[Number(x % 512n)];
+};
+
+function base512ToBigInt(base512) {
+	if(typeof base512 !== "string") throw new TypeError();
+	for(let i = 0; i < base512.length; i++) {
+		if(!base512Digits.includes(base512[i])) throw new TypeError("Invalid base 512 number!");
+	};
 	
 	let output = 0n;
 	
-	for(let i = base36.length-1; i >= 0; i--) {
-		let exponent = (base36.length - 1) - i;
-		let mantissa = orderedBase36Digits.indexOf(base36[i]);
-		output += BigInt(mantissa)*36n ** BigInt(exponent);
+	for(let i = base512.length - 1; i >= 0; i--) {
+		let exponent = (base512.length-1) - i;
+		let mantissa = base512Digits.indexOf(base512[i]);
+		output += BigInt(mantissa)*512n ** BigInt(exponent);
 	};
 	
 	return output;
 };
 
+
 return {
-    generateRSAKeys,
-	  splitMessage,
-	  base36toBigInt,
-	  orderedBase36Digits
+	generateRSAKeys,
+	RSAKeysFrom,
+	splitMessage,
+	base512Digits,
+	base512ToBigInt,
+	bigIntToBase512
 };
