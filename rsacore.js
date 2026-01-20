@@ -234,7 +234,7 @@ function generateRSAKeys(primeLength=20) {
 		product: out.product,
 		publicE: out.publicE,
 		logPrivateExponent: function() {
-			console.log(out.privE);
+			console.log(out.privE.toString());
 		},
 		lockMessage: function(string) {
 			if(typeof string !== "string") throw new TypeError();
@@ -279,7 +279,7 @@ function splitMessage(string, chunkLength=20) {
 	return string.match(/.{1,20}/g);
 };
 
-const base512Digits = (()=>{ //only way to sufficiently compact messages
+const base512Digits = (()=>{
 	let output = "";
 	for(let i = 0x2200; i < 0x2400; i++) {
 		output += String.fromCharCode(i);
@@ -309,7 +309,6 @@ function base512ToBigInt(base512) {
 	
 	return output;
 };
-
 
 return {
 	generateRSAKeys,
