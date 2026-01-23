@@ -1,4 +1,3 @@
-//basically a beefed up version of chatlogger
 let chatList = {
     page: {},
     global: {}
