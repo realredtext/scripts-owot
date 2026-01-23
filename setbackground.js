@@ -1,4 +1,4 @@
-const setBG = (bgImage) => {
+function(bgImage) {
     state.background = {
         path: bgImage
     };
