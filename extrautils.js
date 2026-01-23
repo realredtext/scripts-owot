@@ -19,3 +19,16 @@ const onmouseswipe = (elmnt, mouseover, mouseleave) => {
     elmnt.onmouseover = mouseover;
     elmnt.onmouseleave = mouseleave;
 };
+
+function bound(value, min, max) {
+    if(!["number", "bigint"].includes(typeof min)) throw new TypeError();
+    if(!["number", "bigint"].includes(typeof max)) throw new TypeError();
+    if(!["number", "bigint"].includes(typeof value)) throw new TypeError();
+    if(min > max) [min, max] = [max, min];
+    if(min === max) return;
+
+    if(value > max) value = max;
+    if(value < min) value = min;
+
+    return value;
+};
