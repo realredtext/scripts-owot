@@ -1,4 +1,4 @@
-let tunedChannel = "100"; //channel you send AND receive from, big risk to separate the 2
+let tunedChannel = "100";
 let messageName = `[${tunedChannel}]`;
 
 //TODO: integrate Managers.js
