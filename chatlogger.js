@@ -12,8 +12,8 @@ w.on("chatmod", (e) => {
             message: e.message,
             nickname: e.nickname,
             realUsername: e.realUsername,
-            registered: !!e.realUsername //anon username "e" does not exist
-        }
+            registered: !!e.realUsername
+        };
         logs[e.location].push(msgData);
     };
 });
@@ -24,11 +24,11 @@ function download(content, fileName, contentType) {
     a.href = URL.createObjectURL(file);
     a.download = fileName;
     a.click();
-  }
+};
 
-  function onDownload(fileName, jsonData) {
-      download(JSON.stringify(jsonData), `${fileName}.json`, "text/plain");
-  }
+function onDownload(fileName, jsonData) {
+    download(JSON.stringify(jsonData), `${fileName}.json`, "text/plain");
+};
 
 const exportLogs = {
     page: () => {
@@ -46,13 +46,13 @@ const exportLogs = {
         });
 
         onDownload(`GlobalLog_${Date.now()}`, globalLog);
-    }
+    };
 };
 
 client_commands.export = ([type]) => {
     if(type in {"page":0,"global":1}) {
         exportLogs[type]();
     } else {
-        clientChatResponse("Invalid type")
-    }
+        clientChatResponse("Invalid type");
+    };
 }
