@@ -35,6 +35,7 @@ let rankManager = new ManagerCommandWrapper("Ranks", "#00b000", {
         }
 
         delete ranks[user];
+        localStorage.setItem("ranks", JSON.stringify(ranks));
         return `Removed rank from ${user}`;
     },
     "list": () => {
