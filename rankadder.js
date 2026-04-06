@@ -18,7 +18,7 @@ let rankManager = new ManagerCommandWrapper("Ranks", "#00b000", {
         if(!color.startsWith("#")) color = "#"+color;
         if(color.length !== 7) return `Bad color`;
 
-        ranks[user] = [content.join(""), color];
+        ranks[user] = [content.join(" "), color];
 
         if(JSON.stringify(ranks) !== "{}") {
             localStorage.setItem("ranks", JSON.stringify(ranks));
